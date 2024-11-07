@@ -21,10 +21,10 @@ function Add(input) {
 
     const numbersArray = input.split(defaultDelimiter).map(Number);
     const negativeNumbers = numbersArray.filter((number) => number < 0);
-    if(negativeNumbers.length){
+    if (negativeNumbers.length) {
         throw new Error("negative numbers not allowed: " + negativeNumbers.join(", "));
     }
-    sum = numbersArray.reduce((prevSum, number) => prevSum + parseInt(number), 0);
+    sum = numbersArray.filter((number) => number < 1001).reduce((prevSum, number) => prevSum + parseInt(number), 0);
 
     return sum;
 }
