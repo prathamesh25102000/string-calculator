@@ -1,4 +1,4 @@
-export default function NumberList(input: string) {
+export default function getNumberList(input: string) {
 
   if(!input.length){
     return [];
