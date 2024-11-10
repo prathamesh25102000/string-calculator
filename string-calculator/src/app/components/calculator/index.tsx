@@ -8,17 +8,25 @@ function StringCalculator() {
   const [input, setInput] = useState<string>("");
   const [result, setResult] = useState<null | number>(null);
   const [error, setError] = useState<any>(null);
+  const [isResultInThrottle, setIsResultInThrottle] = useState<boolean>(false);
 
   const calculateSum = (inputString: string) => {
-    try {
-      const sum = addNumbers(inputString.replace(/\\n/g, "\n"));
-      setResult(sum);
-      setError(null);
-    } catch (err) {
-      console.log(err);
 
-      setError(err?.message || "");
-      setResult(null);
+    if (!isResultInThrottle) {
+      setIsResultInThrottle(true);
+
+      setTimeout(() => {
+        try {
+          const sum = addNumbers(inputString.replace(/\\n/g, "\n"));
+          setResult(sum);
+          setError(null);
+        } catch (err) {
+          setError(err?.message || "");
+          setResult(null);
+        } finally {
+          setIsResultInThrottle(false);
+        }
+      }, 700);
     }
   };
 
@@ -40,11 +48,17 @@ function StringCalculator() {
           calculateSum(input);
         }}
         className={styles.btn}
+        disabled={isResultInThrottle}
+        data-type={isResultInThrottle ? "inactive" : "active"}
       >
-        Calculate
+        {isResultInThrottle ? "Calculating..." : "Calculate"}
       </button>
-      {result !== null && <p className={styles.result}>Result : {result}</p>}
-      {error && <p className={styles.error}>Error : {error}</p>}
+      {result !== null && !isResultInThrottle && (
+        <p className={styles.result}>Result : {result}</p>
+      )}
+      {error && !isResultInThrottle && (
+        <p className={styles.error}>Error : {error}</p>
+      )}
     </div>
   );
 }
